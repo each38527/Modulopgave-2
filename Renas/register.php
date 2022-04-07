@@ -12,7 +12,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
  
     // Validate username
     if(empty(trim($_POST["username"]))){
-        $username_err = "Please enter a username.";
+        $username_err = "Skriv brugernavn.";
     } elseif(!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))){
         $username_err = "Username can only contain letters, numbers, and underscores.";
     } else{
@@ -129,7 +129,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Gem">
-                <input type="reset" class="btn btn-secondary ml-2" href="index.php" value="Annuler">
+                <a href="index.php" class="btn btn-danger ml-3">Anuller</a>
+
             </div>
             <p>Har du allerede en bruger?<a href="login.php">Log ind her</a>.</p>
         </form>
