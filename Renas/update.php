@@ -11,8 +11,6 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
     $input_clean = trim($_POST["clean"]);
     if (empty($input_clean)) {
         $clean_err = "Skriv en rengørintstype.";
-    } elseif (!filter_var($input_clean, FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => "/^[a-zA-Z\s]+$/")))) {
-        $clean_err = "Skriv en rengøringstype.";
     } else {
         $clean = $input_clean;
     }
@@ -24,8 +22,8 @@ if (isset($_POST["id"]) && !empty($_POST["id"])) {
         $address = $input_address;
     }
 
-    $input_comment = trim($_POST["coment"]);
-    if (empty($input_coment)) {
+    $input_comment = trim($_POST["comment"]);
+    if (empty($input_comment)) {
         $coment_err = "Skriv en kommentar.";
     } else {
         $comment = $input_comment;
