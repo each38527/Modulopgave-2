@@ -1,116 +1,109 @@
 <?php
-// Include config file
+
 require_once "config.php";
- 
-// Define variables and initialize with empty values
-$name = $address = $salary = "";
-$name_err = $address_err = $salary_err = "";
- 
-// Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    // Validate name
-    $input_name = trim($_POST["name"]);
-    if(empty($input_name)){
-        $name_err = "Please enter a name.";
-    } elseif(!filter_var($input_name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
-        $name_err = "Please enter a valid name.";
-    } else{
-        $name = $input_name;
+
+$clean = $address = $comment = "";
+$clean_err = $address_err = $comment_err = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $input_clean = trim($_POST["clean"]);
+    if (empty($input_clean)) {
+        $clean_err = "Skriv en rengøringstype.";
+    } else {
+        $clean = $input_clean;
     }
-    
-    // Validate address
+
+
     $input_address = trim($_POST["address"]);
-    if(empty($input_address)){
-        $address_err = "Please enter an address.";     
-    } else{
+    if (empty($input_address)) {
+        $address_err = "Skriv en adresse.";
+    } else {
         $address = $input_address;
     }
-    
-    // Validate salary
-    $input_salary = trim($_POST["salary"]);
-    if(empty($input_salary)){
-        $salary_err = "Please enter the salary amount.";     
-    } elseif(!ctype_digit($input_salary)){
-        $salary_err = "Please enter a positive integer value.";
-    } else{
-        $salary = $input_salary;
+
+    $input_comment = trim($_POST["comment"]);
+    if (empty($input_comment)) {
+        $comment_err = "Skriv en kommentar.";
+    } else {
+        $comment = $input_comment;
     }
-    
-    // Check input errors before inserting in database
-    if(empty($name_err) && empty($address_err) && empty($salary_err)){
-        // Prepare an insert statement
-        $sql = "INSERT INTO employees (name, address, salary) VALUES (?, ?, ?)";
-         
-        if($stmt = mysqli_prepare($link, $sql)){
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "sss", $param_name, $param_address, $param_salary);
-            
-            // Set parameters
-            $param_name = $name;
+
+    if (empty($clean_err) && empty($address_err) && empty($comment_err)) {
+
+        $sql = "INSERT INTO cleaning (clean, address, comment) VALUES (?, ?, ?)";
+
+        if ($stmt = mysqli_prepare($link, $sql)) {
+
+            mysqli_stmt_bind_param($stmt, "sss", $param_clean, $param_address, $param_comment);
+
+            $param_clean = $clean;
             $param_address = $address;
-            $param_salary = $salary;
-            
-            // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
-                // Records created successfully. Redirect to landing page
+            $param_comment = $comment;
+
+            if (mysqli_stmt_execute($stmt)) {
+
                 header("location: clean.php");
                 exit();
-            } else{
-                echo "Oops! Something went wrong. Please try again later.";
-            }           
-            // Close statement
+            } else {
+                echo "Noget gik galt, prøv igen senere.";
+            }
+
             mysqli_stmt_close($stmt);
         }
     }
 }
 
-// Close connection
+
 mysqli_close($link);
 
 ?>
- 
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Create Record</title>
+    <title>Ny rengøring</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .wrapper{
+        .wrapper {
             width: 600px;
             margin: 0 auto;
         }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="mt-5">Create Record</h2>
-                    <p>Please fill this form and submit to add employee record to the database.</p>
+                    <h2 class="mt-5">Ny rengøring</h2>
+                    <p>Udfyld formularen for at oprette en ny rengøring.</p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $name; ?>">
-                            <span class="invalid-feedback"><?php echo $name_err;?></span>
+                            <label>Rengøringstype</label>
+                            <input type="text" name="clean" class="form-control <?php echo (!empty($clean_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $clean; ?>">
+                            <span class="invalid-feedback"><?php echo $clean_err; ?></span>
                         </div>
                         <div class="form-group">
-                            <label>Address</label>
+                            <label>Addresse</label>
                             <textarea name="address" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>"><?php echo $address; ?></textarea>
-                            <span class="invalid-feedback"><?php echo $address_err;?></span>
+                            <span class="invalid-feedback"><?php echo $address_err; ?></span>
                         </div>
                         <div class="form-group">
-                            <label>Salary</label>
-                            <input type="text" name="salary" class="form-control <?php echo (!empty($salary_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $salary; ?>">
-                            <span class="invalid-feedback"><?php echo $salary_err;?></span>
+                            <label>Kommentar</label>
+                            <input type="text" name="comment" class="form-control <?php echo (!empty($comment_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $comment; ?>">
+                            <span class="invalid-feedback"><?php echo $comment_err; ?></span>
                         </div>
-                        <input type="submit" class="btn btn-primary" value="Submit">
-                        <a href="clean.php" class="btn btn-secondary ml-2">Cancel</a>
+                        <input type="submit" class="btn btn-primary" value="Gem">
+                        <a href="clean.php" class="btn btn-secondary ml-2">Tilbage</a>
                     </form>
                 </div>
-            </div>        
+            </div>
         </div>
     </div>
 </body>
+
 </html>
